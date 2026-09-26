@@ -1154,6 +1154,89 @@ local function makeSection(opts, leftColumn, rightColumn, tabPage)
         return el
     end
 
+    -- dropdown = alias for combo (some call-sites use this name)
+    function sc:dropdown(o)
+        return sc:combo(o)
+    end
+
+    -- input / textbox element
+    function sc:input(o)
+        o = o or {}
+        local val = tostring(o.default or "")
+        local container2 = Instance.new("Frame")
+        container2.BackgroundColor3     = THEME.elem
+        container2.BackgroundTransparency = 0.06
+        container2.BorderSizePixel      = 0
+        container2.Size                 = UDim2.new(1, 0, 0, 30)
+        container2.Parent               = sectionFrame
+        local c2 = Instance.new("UICorner")
+        c2.CornerRadius = UDim.new(0, 6)
+        c2.Parent       = container2
+        local lbl2 = Instance.new("TextLabel")
+        lbl2.Text              = tostring(o.name or "")
+        lbl2.TextColor3        = THEME.dim
+        lbl2.Font              = Enum.Font.GothamMedium
+        lbl2.TextSize          = 12
+        lbl2.BackgroundTransparency = 1
+        lbl2.TextXAlignment    = Enum.TextXAlignment.Left
+        lbl2.Size              = UDim2.new(0.45, -8, 1, 0)
+        lbl2.Position          = UDim2.fromOffset(10, 0)
+        lbl2.ZIndex            = container2.ZIndex + 1
+        lbl2.Parent            = container2
+        local box = Instance.new("TextBox")
+        box.AnchorPoint        = Vector2.new(1, 0.5)
+        box.Position           = UDim2.new(1, -8, 0.5, 0)
+        box.Size               = UDim2.new(0.5, -8, 0, 20)
+        box.Text               = val
+        box.TextColor3         = THEME.text
+        box.PlaceholderColor3  = THEME.dim
+        box.PlaceholderText    = tostring(o.placeholder or "")
+        box.Font               = Enum.Font.GothamMedium
+        box.TextSize           = 12
+        box.ClearTextOnFocus   = false
+        box.BackgroundColor3   = THEME.panel
+        box.BorderSizePixel    = 0
+        box.ZIndex             = container2.ZIndex + 2
+        box.TextXAlignment     = Enum.TextXAlignment.Left
+        box.Parent             = container2
+        local bc2 = Instance.new("UICorner")
+        bc2.CornerRadius = UDim.new(0, 4)
+        bc2.Parent       = box
+        local pad2 = Instance.new("UIPadding")
+        pad2.PaddingLeft  = UDim.new(0, 6)
+        pad2.PaddingRight = UDim.new(0, 6)
+        pad2.Parent       = box
+        local cbs = {}
+        if type(o.callback) == "function" then table.insert(cbs, o.callback) end
+        box.FocusLost:Connect(function()
+            val = box.Text
+            for _, cb in ipairs(cbs) do pcall(cb, val) end
+        end)
+        local el = { _container = container2, _label = lbl2, _value = val, _cbs = cbs }
+        function el:get() return self._value end
+        function el:set(v) self._value = tostring(v or ""); box.Text = self._value end
+        function el:SetText(t) self._label.Text = tostring(t or "") end
+        if type(o.flag) == "string" then
+            local g = getgenv and getgenv() or _G
+            if not g.Flags then g.Flags = {} end
+            g.Flags[o.flag] = el
+        end
+        return el
+    end
+
+    -- spacer / divider
+    function sc:divider(o)
+        o = o or {}
+        local f = Instance.new("Frame")
+        f.BackgroundColor3     = THEME.line
+        f.BackgroundTransparency = 0.5
+        f.BorderSizePixel      = 0
+        f.Size                 = UDim2.new(1, 0, 0, 1)
+        f.Parent               = sectionFrame
+        return { _container = f }
+    end
+    sc.spacer = sc.divider
+
     return sc
 end
 
@@ -1718,6 +1801,17 @@ local function newWindow(opts)
         end
 
         function tabCtrl:setopen() end
+
+        -- configs: noop stub (config system not implemented)
+        function tabCtrl:configs() end
+
+        -- setfury: noop stub
+        function tabCtrl:setfury() end
+
+        -- dropdown at tab level routes to section
+        function tabCtrl:dropdown(o)
+            return self:section({ side = o and o.side or "left" }):dropdown(o)
+        end
 
         return tabCtrl
     end
