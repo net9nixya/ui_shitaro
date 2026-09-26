@@ -3271,7 +3271,23 @@ UIShadow6.Size = UDim2.new()
 					function sc:toggle(opts)
 						local el = makeElement(opts)
 						if opts and opts.options then
-							el.options = { toggle = function(s,o) return makeElement(o) end, slider = function(s,o) return makeElement(o) end, combo = function(s,o) return makeElement(o) end }
+							el.options = {
+								toggle   = function(s, o) local e = makeElement(o); if o and o.options then e.options = el.options end return e end,
+								slider   = function(s, o) return makeElement(o) end,
+								combo    = function(s, o) return makeElement(o) end,
+								color    = function(s, o) return makeElement(o) end,
+								keybind  = function(s, o) return makeElement(o) end,
+								button   = function(s, o)
+									local e = makeElement(o)
+									function e:Fire() if o and type(o.callback) == "function" then pcall(o.callback) end end
+									return e
+								end,
+								label    = function(s, o)
+									local e = makeElement(o)
+									function e:SetText(t) self._label.Text = tostring(t or "") end
+									return e
+								end,
+							}
 						end
 						return el
 					end
