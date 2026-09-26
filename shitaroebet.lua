@@ -3334,7 +3334,22 @@ UIShadow6.Size = UDim2.new()
 
 								return cloneStub
 							end
-				function tabController:gallery(opts) return {} end
+				function tabController:gallery(opts)
+					opts = opts or {}
+					local cbs = {}
+					if type(opts.callback) == "function" then table.insert(cbs, opts.callback) end
+					local val = opts.default
+					local g = {}
+					function g:get()         return val end
+					function g:set(v)        val = v; for _, cb in ipairs(cbs) do pcall(cb, v) end end
+					function g:setdata(v)    end
+					function g:setdefault(v) val = v end
+					function g:refresh()     end
+					function g:clear()       val = nil end
+					function g:all()         return {} end
+					function g:search(q)     end
+					return g
+				end
 				function tabController:color(opts) return {} end
 
 				function tabController:sub(opts)
@@ -3355,7 +3370,22 @@ UIShadow6.Size = UDim2.new()
 								end
 								return cloneStub
 							end
-					function sc2:gallery() return {} end
+					function sc2:gallery(opts)
+						opts = opts or {}
+						local cbs = {}
+						if type(opts.callback) == "function" then table.insert(cbs, opts.callback) end
+						local val = opts.default
+						local g = {}
+						function g:get()         return val end
+						function g:set(v)        val = v; for _, cb in ipairs(cbs) do pcall(cb, v) end end
+						function g:setdata(v)    end
+						function g:setdefault(v) val = v end
+						function g:refresh()     end
+						function g:clear()       val = nil end
+						function g:all()         return {} end
+						function g:search(q)     end
+						return g
+					end
 					function sc2:color() return {} end
 					function sc2:sub() return tabController:sub({}) end
 					function sc2:setopen() end
