@@ -1,3 +1,4 @@
+
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -3211,6 +3212,47 @@ UIShadow6.Size = UDim2.new()
 				local tween7 = TweenService:Create(tabDescription, TweenInfo.new(0.24, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { TextTransparency = 0.4 })
 				tween7:Play()
 				tabPage.Visible = true
+
+				local tabController = {}
+				tabController.page = tabPage
+
+				function tabController:section(opts)
+					opts = opts or {}
+					local col = (opts.side == "right") and rightColumn or leftColumn
+					local sectionFrame = Instance.new("Frame")
+					sectionFrame.BackgroundTransparency = 1
+					sectionFrame.Size = UDim2.new(1, 0, 0, 0)
+					sectionFrame.AutomaticSize = Enum.AutomaticSize.Y
+					sectionFrame.BorderSizePixel = 0
+					sectionFrame.Parent = col
+					local sl = Instance.new("UIListLayout")
+					sl.Padding = UDim.new(0, 4)
+					sl.SortOrder = Enum.SortOrder.LayoutOrder
+					sl.Parent = sectionFrame
+					local sc = { frame = sectionFrame, column = col, page = tabPage }
+					function sc:additem(item) item.Parent = sectionFrame end
+					return sc
+				end
+
+				function tabController:clone(opts) return {} end
+				function tabController:gallery(opts) return {} end
+				function tabController:color(opts) return {} end
+
+				function tabController:sub(opts)
+					opts = opts or {}
+					local sc2 = tabController:section({ side = "left" })
+					function sc2:section(o) return tabController:section(o) end
+					function sc2:clone() return {} end
+					function sc2:gallery() return {} end
+					function sc2:color() return {} end
+					function sc2:sub() return tabController:sub({}) end
+					function sc2:setopen() end
+					return sc2
+				end
+
+				function tabController:setopen(v) end
+
+				return tabController
 			end,
 	toggle = function()
 				toggleSound.PlaybackSpeed = 1.32
