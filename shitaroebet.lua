@@ -1,3 +1,4 @@
+
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -106,12 +107,10 @@ UIStroke.Color = Color3.fromRGB(52, 52, 64)
 UIStroke.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke.Parent = hotkeysPanel
-local UIShadow = UIShadow.Offset = UDim2.fromOffset(0, 2)
-UIShadow.Transparency = 0.6
-UIShadow.BlurRadius = UDim.new(0, 10)
-UIShadow.Color = Color3.fromRGB(6, 6, 8)
+local UIShadow = Instance.new("Frame")
+UIShadow.Visible = false
+UIShadow.Size = UDim2.new()
 UIShadow.ZIndex = -1
-UIShadow.Spread = UDim2.fromOffset(-2, -2)
 UIShadow.Parent = hotkeysPanel
 local hotkeysBackground = Instance.new("Frame")
 hotkeysBackground.Name = "ygnmfcpteajl"
@@ -243,12 +242,10 @@ UIStroke2.Color = Color3.fromRGB(52, 52, 64)
 UIStroke2.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke2.Parent = brandBadge
-local UIShadow2 = UIShadow2.Offset = UDim2.fromOffset(0, 2)
-UIShadow2.Transparency = 0.6
-UIShadow2.BlurRadius = UDim.new(0, 10)
-UIShadow2.Color = Color3.fromRGB(6, 6, 8)
+local UIShadow2 = Instance.new("Frame")
+UIShadow2.Visible = false
+UIShadow2.Size = UDim2.new()
 UIShadow2.ZIndex = -1
-UIShadow2.Spread = UDim2.fromOffset(-2, -2)
 UIShadow2.Parent = brandBadge
 local brandBadgeBackground = Instance.new("Frame")
 brandBadgeBackground.Name = "xbpiwlhecbej"
@@ -352,12 +349,10 @@ UIStroke3.Color = Color3.fromRGB(52, 52, 64)
 UIStroke3.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke3.Parent = statusBadge
-local UIShadow3 = UIShadow3.Offset = UDim2.fromOffset(0, 2)
-UIShadow3.Transparency = 0.6
-UIShadow3.BlurRadius = UDim.new(0, 10)
-UIShadow3.Color = Color3.fromRGB(6, 6, 8)
+local UIShadow3 = Instance.new("Frame")
+UIShadow3.Visible = false
+UIShadow3.Size = UDim2.new()
 UIShadow3.ZIndex = -1
-UIShadow3.Spread = UDim2.fromOffset(-2, -2)
 UIShadow3.Parent = statusBadge
 local statusBadgeBackground = Instance.new("Frame")
 statusBadgeBackground.Name = "odjeeisfsqwh"
@@ -617,8 +612,15 @@ end)
 clockLabel.Text = "11:57"
 watermarkOverlay.Visible = true
 
-local renderSteppedConnection02 = RunService.RenderStepped:Connect(function(deltaTime2)
-	renderSteppedConnection02:Disconnect()
+local renderSteppedConnection02
+renderSteppedConnection02 = RunService.RenderStepped:Connect(function(deltaTime2)
+	local t = watermarkOverlay.GroupTransparency
+	if t <= 0 then
+		watermarkOverlay.GroupTransparency = 0
+		renderSteppedConnection02:Disconnect()
+		return
+	end
+	watermarkOverlay.GroupTransparency = math.max(0, t - deltaTime2 * 5)
 end)
 
 local openerButton = Instance.new("ImageButton")
@@ -866,12 +868,10 @@ getgenv().shitaroebet = {
 		UIStroke5.Color = Color3.fromRGB(52, 52, 64)
 		UIStroke5.Transparency = 0.55
 		UIStroke5.Parent = browserWindow
-		local UIShadow4 = 		UIShadow4.Offset = UDim2.fromOffset(0, 6)
-		UIShadow4.Transparency = 0.4
-		UIShadow4.BlurRadius = UDim.new(0, 26)
-		UIShadow4.Color = Color3.fromRGB(6, 6, 8)
+		local UIShadow4 = Instance.new("Frame")
+UIShadow4.Visible = false
+UIShadow4.Size = UDim2.new()
 		UIShadow4.ZIndex = -1
-		UIShadow4.Spread = UDim2.fromOffset(-4, -4)
 		UIShadow4.Parent = browserWindow
 		local browserTitleBar = Instance.new("Frame")
 		browserTitleBar.Name = "hlmyrgenrnnp"
@@ -1226,7 +1226,6 @@ getgenv().shitaroebet = {
 		browserWindow:GetDescendants()
 		browserWindow.BackgroundTransparency = 1
 		UIStroke5.Transparency = 1
-		UIShadow4.Transparency = 1
 		browserTitleBar.BackgroundTransparency = 1
 		titleBarCornerFill.BackgroundTransparency = 1
 		backButton.BackgroundTransparency = 1
@@ -1400,19 +1399,15 @@ getgenv().shitaroebet = {
 		local UICorner17 = Instance.new("UICorner")
 		UICorner17.CornerRadius = UDim.new(0, windowOptions.radius)
 		UICorner17.Parent = windowShadowHost
-		local UIShadow5 = 		UIShadow5.Offset = UDim2.new()
-		UIShadow5.Transparency = 1
-		UIShadow5.BlurRadius = UDim.new(0, 16)
-		UIShadow5.Color = Color3.fromRGB(6, 6, 8)
+		local UIShadow5 = Instance.new("Frame")
+UIShadow5.Visible = false
+UIShadow5.Size = UDim2.new()
 		UIShadow5.ZIndex = -1
-		UIShadow5.Spread = UDim2.fromOffset(2, 2)
 		UIShadow5.Parent = windowShadowHost
-		local UIShadow6 = 		UIShadow6.Offset = UDim2.new()
-		UIShadow6.Transparency = 1
-		UIShadow6.BlurRadius = UDim.new(0, 38)
-		UIShadow6.Color = Color3.fromRGB(6, 6, 8)
+		local UIShadow6 = Instance.new("Frame")
+UIShadow6.Visible = false
+UIShadow6.Size = UDim2.new()
 		UIShadow6.ZIndex = -2
-		UIShadow6.Spread = UDim2.fromOffset(12, 12)
 		UIShadow6.Parent = windowShadowHost
 		local windowRoot = Instance.new("CanvasGroup")
 		windowRoot.BackgroundColor3 = Color3.fromRGB(6, 6, 8)
@@ -2764,7 +2759,10 @@ getgenv().shitaroebet = {
 			if renderSteppedConnection04 then renderSteppedConnection04:Disconnect() end
 			renderSteppedConnection04 = RunService.RenderStepped:Connect(function(deltaTime6)
 				local t = windowRoot.GroupTransparency
-				if t <= 0 then renderSteppedConnection04:Disconnect() return end
+				if t <= 0 then
+					renderSteppedConnection04:Disconnect()
+					return
+				end
 				windowRoot.GroupTransparency = math.max(0, t - deltaTime6 * 6)
 			end)
 		end)
