@@ -1,4 +1,3 @@
-
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -1380,6 +1379,19 @@ UIShadow4.Size = UDim2.new()
 	end,
 	-- Creates a main window and returns its controller.
 	window = function(_, windowOptions)
+		windowOptions = windowOptions or {}
+		if typeof(windowOptions.size) ~= "UDim2" then
+			windowOptions.size = UDim2.fromOffset(600, 400)
+		end
+		if type(windowOptions.radius) ~= "number" then
+			windowOptions.radius = 8
+		end
+		if type(windowOptions.side) ~= "number" then
+			windowOptions.side = 180
+		end
+		if type(windowOptions.logo) ~= "string" then
+			windowOptions.logo = ""
+		end
 		local windowShell = Instance.new("Frame")
 		windowShell.AnchorPoint = Vector2.new(0.5, 0.5)
 		windowShell.Name = "idjkqolqmiip"
