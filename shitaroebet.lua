@@ -3231,6 +3231,65 @@ UIShadow6.Size = UDim2.new()
 					sl.Parent = sectionFrame
 					local sc = { frame = sectionFrame, column = col, page = tabPage }
 					function sc:additem(item) item.Parent = sectionFrame end
+
+					local function makeElement(opts)
+						opts = opts or {}
+						local container = Instance.new("Frame")
+						container.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+						container.Size = UDim2.new(1, 0, 0, 28)
+						container.BorderSizePixel = 0
+						container.AutomaticSize = Enum.AutomaticSize.Y
+						container.Parent = sectionFrame
+						local c = Instance.new("UICorner")
+						c.CornerRadius = UDim.new(0, 5)
+						c.Parent = container
+						local lbl = Instance.new("TextLabel")
+						lbl.Text = tostring(opts.name or "")
+						lbl.TextColor3 = Color3.fromRGB(220, 220, 225)
+						lbl.BackgroundTransparency = 1
+						lbl.Size = UDim2.new(1, -8, 1, 0)
+						lbl.Position = UDim2.fromOffset(8, 0)
+						lbl.TextXAlignment = Enum.TextXAlignment.Left
+						lbl.Font = Enum.Font.GothamBold
+						lbl.TextSize = 11
+						lbl.ZIndex = 5
+						lbl.Parent = container
+						local cbs = {}
+						if type(opts.callback) == "function" then table.insert(cbs, opts.callback) end
+						local el = { _container = container, _label = lbl, _value = opts.default, _list = {} }
+						function el:get() return self._value end
+						function el:set(v) self._value = v; for _, cb in ipairs(cbs) do pcall(cb, v) end end
+						function el:setlist(v) self._list = v end
+						if type(opts.flag) == "string" then
+							local g = getgenv and getgenv() or _G
+							if not g.Flags then g.Flags = {} end
+							g.Flags[opts.flag] = el
+						end
+						return el
+					end
+
+					function sc:toggle(opts)
+						local el = makeElement(opts)
+						if opts and opts.options then
+							el.options = { toggle = function(s,o) return makeElement(o) end, slider = function(s,o) return makeElement(o) end, combo = function(s,o) return makeElement(o) end }
+						end
+						return el
+					end
+					function sc:slider(opts)  return makeElement(opts) end
+					function sc:combo(opts)   return makeElement(opts) end
+					function sc:color(opts)   return makeElement(opts) end
+					function sc:keybind(opts) return makeElement(opts) end
+					function sc:button(opts)
+						local el = makeElement(opts)
+						function el:Fire() if opts and type(opts.callback) == "function" then pcall(opts.callback) end end
+						return el
+					end
+					function sc:label(opts)
+						local el = makeElement(opts)
+						function el:SetText(t) self._label.Text = tostring(t or "") end
+						return el
+					end
+
 					return sc
 				end
 
