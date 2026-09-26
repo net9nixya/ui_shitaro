@@ -15,18 +15,21 @@ getgenv().shitaro_drawmask = {}
 
 -- ──────────────── THEME ────────────────
 local THEME = {
-    accent  = Color3.fromRGB(255, 255, 255),
-    bg      = Color3.fromRGB(6,   6,   8),
-    dim     = Color3.fromRGB(122, 122, 134),
-    glow    = Color3.fromRGB(150, 152, 175),
-    head    = Color3.fromRGB(15,  15,  18),
-    line    = Color3.fromRGB(52,  52,  64),
-    panel   = Color3.fromRGB(11,  11,  14),
-    side    = Color3.fromRGB(12,  12,  15),
-    text    = Color3.fromRGB(240, 240, 245),
-    elem    = Color3.fromRGB(15,  15,  18),
-    on      = Color3.fromRGB(80,  180, 120),
-    off     = Color3.fromRGB(52,  52,  64),
+    accent  = Color3.fromRGB(100, 200, 255),   -- cyan highlight
+    accent2 = Color3.fromRGB(140, 100, 255),   -- violet secondary
+    bg      = Color3.fromRGB(8,   9,   14),    -- deep navy-black
+    dim     = Color3.fromRGB(100, 108, 135),   -- muted blue-grey
+    glow    = Color3.fromRGB(100, 200, 255),   -- cyan glow
+    head    = Color3.fromRGB(13,  15,  24),    -- header bg
+    line    = Color3.fromRGB(35,  40,  62),    -- separator
+    panel   = Color3.fromRGB(11,  13,  20),    -- card bg
+    side    = Color3.fromRGB(10,  11,  18),    -- sidebar
+    text    = Color3.fromRGB(220, 228, 255),   -- blue-tinted white
+    elem    = Color3.fromRGB(14,  16,  26),    -- element row
+    on      = Color3.fromRGB(70,  210, 150),   -- toggle on teal
+    off     = Color3.fromRGB(30,  34,  52),    -- toggle off dark
+    badge   = Color3.fromRGB(18,  21,  36),    -- section badge bg
+    hover   = Color3.fromRGB(20,  24,  40),    -- hover state
 }
 
 -- ──────────────── ROOT SCREENGUI ────────────────
@@ -90,7 +93,7 @@ do
         badge.Active               = true
         badge.BackgroundColor3     = THEME.panel
         badge.BorderSizePixel      = 0
-        badge.BackgroundTransparency = 0.16
+        badge.BackgroundTransparency = 0.05
         badge.ZIndex               = 2
         badge.AutomaticSize        = Enum.AutomaticSize.X
         badge.Size                 = UDim2.fromOffset(0, 30)
@@ -380,9 +383,23 @@ local function showNotif(opts)
     c.Parent       = card
 
     local st = Instance.new("UIStroke")
-    st.Color       = THEME.line
-    st.Transparency = 0.45
+    st.Color       = THEME.accent
+    st.Transparency = 0.72
+    st.Thickness   = 1
     st.Parent      = card
+
+    local accentStrip = Instance.new("Frame")
+    accentStrip.BackgroundColor3 = THEME.accent
+    accentStrip.BackgroundTransparency = 0.35
+    accentStrip.BorderSizePixel  = 0
+    accentStrip.Size             = UDim2.new(0, 2, 1, -8)
+    accentStrip.AnchorPoint      = Vector2.new(0, 0.5)
+    accentStrip.Position         = UDim2.new(0, 4, 0.5, 0)
+    accentStrip.ZIndex           = card.ZIndex + 1
+    accentStrip.Parent           = card
+    local asc = Instance.new("UICorner")
+    asc.CornerRadius = UDim.new(1, 0)
+    asc.Parent = accentStrip
 
     local lbl = Instance.new("TextLabel")
     lbl.Text              = title
@@ -392,8 +409,8 @@ local function showNotif(opts)
     lbl.TextWrapped       = true
     lbl.BackgroundTransparency = 1
     lbl.TextXAlignment    = Enum.TextXAlignment.Left
-    lbl.Size              = UDim2.new(1, -16, 0, 36)
-    lbl.Position          = UDim2.fromOffset(8, 0)
+    lbl.Size              = UDim2.new(1, -20, 0, 36)
+    lbl.Position          = UDim2.fromOffset(14, 0)
     lbl.AutomaticSize     = Enum.AutomaticSize.Y
     lbl.Parent            = card
 
@@ -517,15 +534,21 @@ local function makeElement(opts, parent)
     local ROW_H = 30
     local container = Instance.new("Frame")
     container.BackgroundColor3     = THEME.elem
-    container.BackgroundTransparency = 0.06
+    container.BackgroundTransparency = 0.02
     container.BorderSizePixel      = 0
     container.Size                 = UDim2.new(1, 0, 0, ROW_H)
     container.ClipsDescendants     = false
     container.Parent               = parent
 
     local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, 6)
+    c.CornerRadius = UDim.new(0, 7)
     c.Parent       = container
+
+    local cStroke = Instance.new("UIStroke")
+    cStroke.Color       = THEME.line
+    cStroke.Transparency = 0.55
+    cStroke.Thickness   = 1
+    cStroke.Parent      = container
 
     -- Left label
     local lbl = Instance.new("TextLabel")
@@ -573,7 +596,7 @@ local function makeElement(opts, parent)
     if kind == "toggle" then
         local val = opts.default == true
 
-        local trackW, trackH = 32, 17
+        local trackW, trackH = 36, 18
         local track = Instance.new("Frame")
         track.AnchorPoint        = Vector2.new(1, 0.5)
         track.Position           = UDim2.new(1, -10, 0.5, 0)
@@ -587,12 +610,18 @@ local function makeElement(opts, parent)
         tc.CornerRadius = UDim.new(1, 0)
         tc.Parent       = track
 
+        local tst = Instance.new("UIStroke")
+        tst.Color       = val and THEME.on or THEME.line
+        tst.Transparency = 0.5
+        tst.Thickness   = 1
+        tst.Parent      = track
+
         local knob = Instance.new("Frame")
         knob.AnchorPoint      = Vector2.new(0, 0.5)
         knob.Position         = val
             and UDim2.new(1, -(trackH - 2) - 1, 0.5, 0)
-            or  UDim2.new(0, 1, 0.5, 0)
-        knob.Size             = UDim2.fromOffset(trackH - 4, trackH - 4)
+            or  UDim2.new(0, 2, 0.5, 0)
+        knob.Size             = UDim2.fromOffset(trackH - 5, trackH - 5)
         knob.BackgroundColor3 = THEME.text
         knob.BorderSizePixel  = 0
         knob.ZIndex           = container.ZIndex + 2
@@ -612,12 +641,14 @@ local function makeElement(opts, parent)
 
         local function refreshVisual(v)
             tween(track, 0.18, { BackgroundColor3 = v and THEME.on or THEME.off })
-            tween(knob, 0.18, {
+            tween(tst,   0.18, { Color = v and THEME.on or THEME.line })
+            tween(knob,  0.18, {
                 Position = v
                     and UDim2.new(1, -(trackH - 2) - 1, 0.5, 0)
-                    or  UDim2.new(0, 1, 0.5, 0),
+                    or  UDim2.new(0, 2, 0.5, 0),
+                BackgroundColor3 = v and Color3.fromRGB(255, 255, 255) or THEME.dim,
             })
-            lbl.TextColor3 = v and THEME.text or THEME.dim
+            tween(lbl, 0.18, { TextColor3 = v and THEME.text or THEME.dim })
         end
 
         el._value = val
@@ -702,9 +733,9 @@ local function makeElement(opts, parent)
         valLabel.Parent            = container
 
         local track = Instance.new("Frame")
-        track.Position           = UDim2.new(0, 10, 1, -10)
+        track.Position           = UDim2.new(0, 10, 1, -12)
         track.AnchorPoint        = Vector2.new(0, 1)
-        track.Size               = UDim2.new(1, -20, 0, 4)
+        track.Size               = UDim2.new(1, -20, 0, 3)
         track.BackgroundColor3   = THEME.off
         track.BorderSizePixel    = 0
         track.ZIndex             = container.ZIndex + 1
@@ -725,13 +756,32 @@ local function makeElement(opts, parent)
         fc.CornerRadius = UDim.new(1, 0)
         fc.Parent       = fill
 
+        -- Slider thumb
+        local thumb = Instance.new("Frame")
+        thumb.AnchorPoint     = Vector2.new(0.5, 0.5)
+        thumb.Position        = UDim2.fromScale(0, 0.5)
+        thumb.Size            = UDim2.fromOffset(10, 10)
+        thumb.BackgroundColor3 = THEME.accent
+        thumb.BorderSizePixel = 0
+        thumb.ZIndex          = container.ZIndex + 3
+        thumb.Parent          = track
+        local thc = Instance.new("UICorner")
+        thc.CornerRadius = UDim.new(1, 0)
+        thc.Parent       = thumb
+        local thst = Instance.new("UIStroke")
+        thst.Color       = THEME.bg
+        thst.Thickness   = 2
+        thst.Parent      = thumb
+
         local function pct(v)
             return math.clamp((v - min) / math.max(max - min, 0.001), 0, 1)
         end
 
         local function refreshSlider(v)
             val = math.clamp(math.floor((v - min) / step + 0.5) * step + min, min, max)
-            fill.Size       = UDim2.fromScale(pct(val), 1)
+            local p = pct(val)
+            fill.Size       = UDim2.fromScale(p, 1)
+            thumb.Position  = UDim2.fromScale(p, 0.5)
             valLabel.Text   = tostring(math.floor(val * 100 + 0.5) / 100) .. suffix
             el._value       = val
         end
@@ -791,20 +841,23 @@ local function makeElement(opts, parent)
         hitbox.Parent             = container
 
         hitbox.MouseButton1Click:Connect(function()
-            tween(container, 0.08, { BackgroundTransparency = 0.55 })
-            task.delay(0.08, function()
-                tween(container, 0.18, { BackgroundTransparency = 0.06 })
+            tween(container, 0.07, { BackgroundColor3 = THEME.accent, BackgroundTransparency = 0.65 })
+            task.delay(0.14, function()
+                tween(container, 0.2, { BackgroundColor3 = THEME.elem, BackgroundTransparency = 0.02 })
             end)
             actionSound:Play()
             for _, cb in ipairs(el._cbs) do pcall(cb) end
         end)
 
         hitbox.MouseEnter:Connect(function()
-            tween(container, 0.15, { BackgroundTransparency = 0.3 })
-            tween(lbl, 0.15, { TextColor3 = THEME.text })
+            tween(container, 0.15, { BackgroundColor3 = THEME.hover, BackgroundTransparency = 0 })
+            tween(lbl, 0.15, { TextColor3 = THEME.accent })
+            tween(cStroke, 0.15, { Color = THEME.accent, Transparency = 0.55 })
         end)
         hitbox.MouseLeave:Connect(function()
-            tween(container, 0.15, { BackgroundTransparency = 0.06 })
+            tween(container, 0.15, { BackgroundColor3 = THEME.elem, BackgroundTransparency = 0.02 })
+            tween(lbl, 0.15, { TextColor3 = THEME.text })
+            tween(cStroke, 0.15, { Color = THEME.line, Transparency = 0.55 })
         end)
 
         function el:Fire()
@@ -863,20 +916,20 @@ local function makeElement(opts, parent)
             dropdown.Size             = UDim2.fromOffset(container.AbsoluteSize.X, 0)
             dropdown.AutomaticSize    = Enum.AutomaticSize.Y
             dropdown.ClipsDescendants = false
-            -- position below container
             dropdown.Position         = UDim2.fromOffset(
                 container.AbsolutePosition.X,
-                container.AbsolutePosition.Y + container.AbsoluteSize.Y + 2
+                container.AbsolutePosition.Y + container.AbsoluteSize.Y + 3
             )
             dropdown.Parent           = screenGui
 
             local dc = Instance.new("UICorner")
-            dc.CornerRadius = UDim.new(0, 6)
+            dc.CornerRadius = UDim.new(0, 7)
             dc.Parent       = dropdown
 
             local dst = Instance.new("UIStroke")
-            dst.Color       = THEME.line
-            dst.Transparency = 0.4
+            dst.Color       = THEME.accent
+            dst.Transparency = 0.75
+            dst.Thickness   = 1
             dst.Parent      = dropdown
 
             local dll = Instance.new("UIListLayout")
@@ -915,10 +968,10 @@ local function makeElement(opts, parent)
                 rpad.Parent      = row
 
                 row.MouseEnter:Connect(function()
-                    tween(row, 0.12, { BackgroundTransparency = 0.55, TextColor3 = THEME.text })
+                    tween(row, 0.1, { BackgroundColor3 = THEME.hover, BackgroundTransparency = 0, TextColor3 = THEME.accent })
                 end)
                 row.MouseLeave:Connect(function()
-                    tween(row, 0.12, { BackgroundTransparency = 1, TextColor3 = THEME.dim })
+                    tween(row, 0.1, { BackgroundColor3 = THEME.panel, BackgroundTransparency = 1, TextColor3 = THEME.dim })
                 end)
                 row.MouseButton1Click:Connect(function()
                     if multi then
@@ -1018,26 +1071,33 @@ local function makeElement(opts, parent)
         local keyLabel = Instance.new("TextButton")
         keyLabel.AnchorPoint       = Vector2.new(1, 0.5)
         keyLabel.Position          = UDim2.new(1, -10, 0.5, 0)
-        keyLabel.Size              = UDim2.fromOffset(70, 20)
+        keyLabel.Size              = UDim2.fromOffset(72, 20)
         keyLabel.TextXAlignment    = Enum.TextXAlignment.Center
-        keyLabel.TextColor3        = THEME.dim
-        keyLabel.Font              = Enum.Font.GothamMedium
-        keyLabel.TextSize          = 11
-        keyLabel.BackgroundColor3  = THEME.panel
+        keyLabel.TextColor3        = THEME.accent
+        keyLabel.Font              = Enum.Font.GothamBold
+        keyLabel.TextSize          = 10
+        keyLabel.BackgroundColor3  = THEME.badge
         keyLabel.BorderSizePixel   = 0
         keyLabel.AutoButtonColor   = false
         keyLabel.ZIndex            = container.ZIndex + 2
-        keyLabel.Text              = val and tostring(val.Name or val) or "None"
+        keyLabel.Text              = val and tostring(val.Name or val) or "—"
         keyLabel.Parent            = container
 
         local klc = Instance.new("UICorner")
-        klc.CornerRadius = UDim.new(0, 4)
+        klc.CornerRadius = UDim.new(1, 0)
         klc.Parent       = keyLabel
+
+        local klst = Instance.new("UIStroke")
+        klst.Color       = THEME.accent
+        klst.Transparency = 0.6
+        klst.Thickness   = 1
+        klst.Parent      = keyLabel
 
         keyLabel.MouseButton1Click:Connect(function()
             listening = true
-            keyLabel.Text      = "..."
+            keyLabel.Text       = "..."
             keyLabel.TextColor3 = THEME.text
+            tween(klst, 0.15, { Color = THEME.on, Transparency = 0.2 })
         end)
 
         UserInputService.InputBegan:Connect(function(inp, gp)
@@ -1047,7 +1107,8 @@ local function makeElement(opts, parent)
                 val = inp.KeyCode
                 el._value = val
                 keyLabel.Text       = tostring(val.Name)
-                keyLabel.TextColor3 = THEME.dim
+                keyLabel.TextColor3 = THEME.accent
+                tween(klst, 0.15, { Color = THEME.accent, Transparency = 0.6 })
                 for _, cb in ipairs(el._cbs) do pcall(cb, val) end
             end
         end)
@@ -1085,22 +1146,58 @@ local function makeSection(opts, leftColumn, rightColumn, tabPage)
     sectionFrame.BorderSizePixel        = 0
     sectionFrame.Parent                 = col
 
-    -- Section header
+    -- Section header pill
     if opts.name and opts.name ~= "" then
+        local headerWrap = Instance.new("Frame")
+        headerWrap.BackgroundTransparency = 1
+        headerWrap.Size                   = UDim2.new(1, 0, 0, 22)
+        headerWrap.BorderSizePixel        = 0
+        headerWrap.ZIndex                 = 5
+        headerWrap.Parent                 = sectionFrame
+
+        local pillBg = Instance.new("Frame")
+        pillBg.BackgroundColor3     = THEME.badge
+        pillBg.BackgroundTransparency = 0.3
+        pillBg.BorderSizePixel      = 0
+        pillBg.Size                 = UDim2.new(0, 0, 1, 0)
+        pillBg.AutomaticSize        = Enum.AutomaticSize.X
+        pillBg.Position             = UDim2.fromOffset(0, 0)
+        pillBg.ZIndex               = 5
+        pillBg.Parent               = headerWrap
+        local pillC = Instance.new("UICorner")
+        pillC.CornerRadius = UDim.new(0, 5)
+        pillC.Parent       = pillBg
+
+        local accentBar = Instance.new("Frame")
+        accentBar.BackgroundColor3 = THEME.accent
+        accentBar.BackgroundTransparency = 0.3
+        accentBar.BorderSizePixel  = 0
+        accentBar.Size             = UDim2.new(0, 2, 0.7, 0)
+        accentBar.AnchorPoint      = Vector2.new(0, 0.5)
+        accentBar.Position         = UDim2.new(0, 0, 0.5, 0)
+        accentBar.ZIndex           = 6
+        accentBar.Parent           = pillBg
+        local abc = Instance.new("UICorner")
+        abc.CornerRadius = UDim.new(1, 0)
+        abc.Parent       = accentBar
+
         local header = Instance.new("TextLabel")
         header.Text               = tostring(opts.name):upper()
-        header.TextColor3         = THEME.dim
+        header.TextColor3         = THEME.accent
+        header.TextTransparency   = 0.25
         header.Font               = Enum.Font.GothamBold
         header.TextSize           = 9
         header.BackgroundTransparency = 1
         header.TextXAlignment     = Enum.TextXAlignment.Left
-        header.Size               = UDim2.new(1, 0, 0, 18)
-        header.ZIndex             = 5
-        header.Parent             = sectionFrame
+        header.Size               = UDim2.fromOffset(0, 22)
+        header.AutomaticSize      = Enum.AutomaticSize.X
+        header.ZIndex             = 6
+        header.Parent             = pillBg
 
-        local pad = Instance.new("UIPadding")
-        pad.PaddingLeft = UDim.new(0, 2)
-        pad.Parent      = header
+        local hpad = Instance.new("UIPadding")
+        hpad.PaddingLeft  = UDim.new(0, 8)
+        hpad.PaddingRight = UDim.new(0, 8)
+        hpad.Parent       = header
     end
 
     local sl = Instance.new("UIListLayout")
@@ -1297,9 +1394,29 @@ local function newWindow(opts)
     brc.CornerRadius = UDim.new(0, radius)
     brc.Parent       = border
 
+    -- Top accent glow strip
+    local topAccentLine = Instance.new("Frame")
+    topAccentLine.BackgroundColor3 = THEME.accent
+    topAccentLine.BackgroundTransparency = 0.55
+    topAccentLine.BorderSizePixel  = 0
+    topAccentLine.Size             = UDim2.new(0.45, 0, 0, 1)
+    topAccentLine.AnchorPoint      = Vector2.new(0.5, 0)
+    topAccentLine.Position         = UDim2.new(0.5, 0, 0, 0)
+    topAccentLine.ZIndex           = 21
+    topAccentLine.Parent           = border
+    local tagc = Instance.new("UIGradient")
+    tagc.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 1),
+        NumberSequenceKeypoint.new(0.15, 0),
+        NumberSequenceKeypoint.new(0.85, 0),
+        NumberSequenceKeypoint.new(1, 1),
+    })
+    tagc.Parent = topAccentLine
+
     local bst = Instance.new("UIStroke")
-    bst.Color       = THEME.line
-    bst.Transparency = 0.45
+    bst.Color       = THEME.accent
+    bst.Transparency = 0.82
+    bst.Thickness   = 1
     bst.Parent      = border
 
     -- Sidebar
@@ -1337,7 +1454,7 @@ local function newWindow(opts)
     local divLine = Instance.new("Frame")
     divLine.AnchorPoint        = Vector2.new(0.5, 0.5)
     divLine.Position           = UDim2.fromScale(0.5, 0.5)
-    divLine.BackgroundColor3   = THEME.line
+    divLine.BackgroundColor3   = THEME.accent
     divLine.ZIndex             = 9
     divLine.BorderSizePixel    = 0
     divLine.Size               = UDim2.new(0, 1, 1, 0)
@@ -1347,8 +1464,9 @@ local function newWindow(opts)
     divGrad.Rotation    = 90
     divGrad.Transparency = NumberSequence.new({
         NumberSequenceKeypoint.new(0,    1),
-        NumberSequenceKeypoint.new(0.12, 0.25),
-        NumberSequenceKeypoint.new(0.88, 0.25),
+        NumberSequenceKeypoint.new(0.08, 0.6),
+        NumberSequenceKeypoint.new(0.5,  0.3),
+        NumberSequenceKeypoint.new(0.92, 0.6),
         NumberSequenceKeypoint.new(1,    1),
     })
     divGrad.Parent = divLine
@@ -1424,8 +1542,9 @@ local function newWindow(opts)
     ucc.Parent       = userCard
 
     local ucst = Instance.new("UIStroke")
-    ucst.Color       = THEME.line
-    ucst.Transparency = 0.6
+    ucst.Color       = THEME.accent
+    ucst.Transparency = 0.78
+    ucst.Thickness   = 1
     ucst.Parent      = userCard
 
     local ucAvatar = Instance.new("ImageLabel")
@@ -1556,20 +1675,20 @@ local function newWindow(opts)
 
     local function deactivateAll()
         for _, td in ipairs(allTabs) do
-            tween(td.btn, 0.18, { BackgroundTransparency = 1 })
-            tween(td.accent, 0.18, { Size = UDim2.new(0, 3, 0, 0), BackgroundTransparency = 1 })
-            tween(td.icon, 0.18, { ImageColor3 = THEME.dim, ImageTransparency = 0.4 })
-            tween(td.title, 0.18, { TextColor3 = THEME.dim, TextTransparency = 0.4 })
+            tween(td.btn, 0.2, { BackgroundTransparency = 1, BackgroundColor3 = THEME.side })
+            tween(td.accent, 0.2, { Size = UDim2.new(0, 2, 0, 0), BackgroundTransparency = 1 })
+            tween(td.icon, 0.2, { ImageColor3 = THEME.dim, ImageTransparency = 0.5 })
+            tween(td.title, 0.2, { TextColor3 = THEME.dim, TextTransparency = 0.5 })
             if td.page then td.page.Visible = false end
         end
     end
 
     local function activateTab(td)
         deactivateAll()
-        tween(td.btn, 0.18, { BackgroundTransparency = 0.55 })
-        tween(td.accent, 0.18, { Size = UDim2.new(0, 3, 0, 22), BackgroundTransparency = 0.05 })
-        tween(td.icon, 0.18, { ImageColor3 = THEME.text, ImageTransparency = 0 })
-        tween(td.title, 0.18, { TextColor3 = THEME.text, TextTransparency = 0 })
+        tween(td.btn, 0.2, { BackgroundTransparency = 0.72, BackgroundColor3 = THEME.accent })
+        tween(td.accent, 0.2, { Size = UDim2.new(0, 2, 0, 18), BackgroundTransparency = 0 })
+        tween(td.icon, 0.2, { ImageColor3 = THEME.accent, ImageTransparency = 0 })
+        tween(td.title, 0.2, { TextColor3 = THEME.text, TextTransparency = 0 })
         if td.page then td.page.Visible = true end
         activePage = td.page
         toggleSound:Play()
@@ -1606,11 +1725,11 @@ local function newWindow(opts)
         local tabAccent = Instance.new("Frame")
         tabAccent.AnchorPoint        = Vector2.new(0, 0.5)
         tabAccent.BackgroundTransparency = 1
-        tabAccent.Position           = UDim2.new(0, 1, 0.5, 0)
+        tabAccent.Position           = UDim2.new(0, 0, 0.5, 0)
         tabAccent.BackgroundColor3   = THEME.accent
         tabAccent.ZIndex             = 8
         tabAccent.BorderSizePixel    = 0
-        tabAccent.Size               = UDim2.new(0, 3, 0, 0)
+        tabAccent.Size               = UDim2.new(0, 2, 0, 0)
         tabAccent.Parent             = tabBtn
 
         local tac = Instance.new("UICorner")
@@ -1727,12 +1846,14 @@ local function newWindow(opts)
 
         tabHit.MouseEnter:Connect(function()
             if activePage ~= tabPage then
-                tween(tabBtn, 0.12, { BackgroundTransparency = 0.8 })
+                tween(tabBtn, 0.12, { BackgroundTransparency = 0.88, BackgroundColor3 = THEME.hover })
+                tween(tabIconImg, 0.12, { ImageColor3 = THEME.text, ImageTransparency = 0.2 })
             end
         end)
         tabHit.MouseLeave:Connect(function()
             if activePage ~= tabPage then
-                tween(tabBtn, 0.12, { BackgroundTransparency = 1 })
+                tween(tabBtn, 0.12, { BackgroundTransparency = 1, BackgroundColor3 = THEME.side })
+                tween(tabIconImg, 0.12, { ImageColor3 = THEME.dim, ImageTransparency = 0.5 })
             end
         end)
 
