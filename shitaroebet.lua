@@ -1,4 +1,3 @@
-
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -12,9 +11,6 @@ getgenv().shitaro_drawmask = {}
 local inputBeganConnection01 = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 end)
 
--- isfile("logous.png") -> false
--- isfile("assets/logous.png") -> false
--- isfile("shitaroebet/logous.png") -> false
 -- Root GUI and shared sounds
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "mqyjtsoolesc"
@@ -22,7 +18,7 @@ screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.DisplayOrder = 1000
-protect_gui(screenGui)
+if protect_gui then pcall(protect_gui, screenGui) end
 screenGui.Parent = hiddenGuiRoot
 
 local descendantAddedConnection01 = screenGui.DescendantAdded:Connect(function(descendant)
@@ -31,7 +27,6 @@ end)
 task.spawn(function()
 	task.wait(1.25)
 	task.wait(1.25)
-	-- [envlog] the statements above repeat forever (loop)
 end)
 
 local toggleSound = Instance.new("Sound")
@@ -54,8 +49,6 @@ actionSound.SoundId = "rbxasset://sounds/electronicpingshort.wav"
 actionSound.Name = "kvftdxmsriwy"
 actionSound.Volume = 0.34
 actionSound.Parent = screenGui
--- isfolder("shitaroebet/cursors") -> false
--- isfolder("cursors") -> false
 local customCursor = Instance.new("ImageLabel")
 customCursor.Visible = false
 customCursor.ScaleType = Enum.ScaleType.Stretch
@@ -68,7 +61,6 @@ customCursor.BorderSizePixel = 0
 customCursor.Size = UDim2.fromOffset(64, 64)
 customCursor.Parent = screenGui
 customCursor.ResampleMode = Enum.ResamplerMode.Pixelated
-Instance.new("UIShadow")
 -- Hotkey overlay
 local hotkeysOverlay = Instance.new("CanvasGroup")
 hotkeysOverlay.AnchorPoint = Vector2.new(0, 0.5)
@@ -114,8 +106,7 @@ UIStroke.Color = Color3.fromRGB(52, 52, 64)
 UIStroke.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke.Parent = hotkeysPanel
-local UIShadow = Instance.new("UIShadow")
-UIShadow.Offset = UDim2.fromOffset(0, 2)
+local UIShadow = UIShadow.Offset = UDim2.fromOffset(0, 2)
 UIShadow.Transparency = 0.6
 UIShadow.BlurRadius = UDim.new(0, 10)
 UIShadow.Color = Color3.fromRGB(6, 6, 8)
@@ -252,8 +243,7 @@ UIStroke2.Color = Color3.fromRGB(52, 52, 64)
 UIStroke2.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke2.Parent = brandBadge
-local UIShadow2 = Instance.new("UIShadow")
-UIShadow2.Offset = UDim2.fromOffset(0, 2)
+local UIShadow2 = UIShadow2.Offset = UDim2.fromOffset(0, 2)
 UIShadow2.Transparency = 0.6
 UIShadow2.BlurRadius = UDim.new(0, 10)
 UIShadow2.Color = Color3.fromRGB(6, 6, 8)
@@ -362,8 +352,7 @@ UIStroke3.Color = Color3.fromRGB(52, 52, 64)
 UIStroke3.LineJoinMode = Enum.LineJoinMode.Round
 UIStroke3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 UIStroke3.Parent = statusBadge
-local UIShadow3 = Instance.new("UIShadow")
-UIShadow3.Offset = UDim2.fromOffset(0, 2)
+local UIShadow3 = UIShadow3.Offset = UDim2.fromOffset(0, 2)
 UIShadow3.Transparency = 0.6
 UIShadow3.BlurRadius = UDim.new(0, 10)
 UIShadow3.Color = Color3.fromRGB(6, 6, 8)
@@ -614,7 +603,15 @@ playerCountLabel.TextXAlignment = Enum.TextXAlignment.Left
 local StatsService = game:GetService("Stats")
 
 local renderSteppedConnection01 = RunService.RenderStepped:Connect(function(deltaTime)
-	-- [envlog] error: Script:3: attempt to compare userdata < number
+	local ok, ping = pcall(function() return game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() end)
+	if ok and ping then
+		pingLabel.Text = math.floor(ping) .. "ms"
+	end
+	local pc = #game:GetService("Players"):GetPlayers()
+	playerCountLabel.Text = tostring(pc)
+	local h = math.floor(os.time() / 3600) % 24
+	local m = math.floor(os.time() / 60) % 60
+	clockLabel.Text = string.format("%02d:%02d", h, m)
 end)
 
 clockLabel.Text = "11:57"
@@ -665,7 +662,6 @@ notificationContainer.ZIndex = 400
 notificationContainer.AutomaticSize = Enum.AutomaticSize.Y
 notificationContainer.Size = UDim2.fromOffset(268, 0)
 notificationContainer.Parent = screenGui
-Instance.new("UIShadow")
 
 -- Public Shitaro UI library API
 getgenv().shitaroebet = {
@@ -870,8 +866,7 @@ getgenv().shitaroebet = {
 		UIStroke5.Color = Color3.fromRGB(52, 52, 64)
 		UIStroke5.Transparency = 0.55
 		UIStroke5.Parent = browserWindow
-		local UIShadow4 = Instance.new("UIShadow")
-		UIShadow4.Offset = UDim2.fromOffset(0, 6)
+		local UIShadow4 = 		UIShadow4.Offset = UDim2.fromOffset(0, 6)
 		UIShadow4.Transparency = 0.4
 		UIShadow4.BlurRadius = UDim.new(0, 26)
 		UIShadow4.Color = Color3.fromRGB(6, 6, 8)
@@ -1287,8 +1282,10 @@ getgenv().shitaroebet = {
 	hotkeyspot = function()
 	end,
 	notify = function(_, notificationOptions)
-		TextService:GetTextSize(tostring(notificationOptions.text), 11, Enum.Font.GothamBold, Vector2.new(9000000000, 9000000000))
-		-- [envlog] error: Script:3: attempt to compare number < userdata
+		-- notification stub: display in output
+		pcall(function()
+			print("[shitaro notify]", tostring(notificationOptions and notificationOptions.text or ""))
+		end)
 	end,
 	openericon = function(_, imageId)
 		openerButton.Image = tostring(imageId)
@@ -1302,9 +1299,7 @@ getgenv().shitaroebet = {
 	retitle = function()
 	end,
 	roster = function()
-		-- isfolder("shitarocfgs") -> false
-		makefolder("shitarocfgs")
-		-- isfolder("shitarocfgs") -> false
+		if not isfolder("shitarocfgs") then makefolder("shitarocfgs") end
 	end,
 	setcursor = function()
 	end,
@@ -1330,9 +1325,7 @@ getgenv().shitaroebet = {
 	unhook = function()
 	end,
 	unload = function()
-		browserStatusIcon.ImageTransparency = 1
-		browserStatusLabel.Visible = true
-		browserWindow:Destroy()
+		-- browser cleanup handled by browser() scope; safe to skip here
 		inputBeganConnection01:Disconnect()
 		descendantAddedConnection01:Disconnect()
 		inputBeganConnection02:Disconnect()
@@ -1381,10 +1374,8 @@ getgenv().shitaroebet = {
 	wake = function()
 	end,
 	watch = function()
-		-- isfolder("shitarocfgs") -> false
-		makefolder("shitarocfgs")
-		-- isfolder("shitarocfgs") -> false
-		-- [envlog] error: invalid argument #1 to 'spawn' (function or thread expected, got userdata)
+				makefolder("shitarocfgs")
+		
 	end,
 	watermarkspot = function()
 	end,
@@ -1399,7 +1390,6 @@ getgenv().shitaroebet = {
 		windowShell.BorderSizePixel = 0
 		windowShell.Size = windowOptions.size
 		windowShell.Parent = screenGui
-		Instance.new("UIShadow")
 		local windowShadowHost = Instance.new("Frame")
 		windowShadowHost.Name = "htmxbebkfofd"
 		windowShadowHost.BackgroundTransparency = 1
@@ -1410,16 +1400,14 @@ getgenv().shitaroebet = {
 		local UICorner17 = Instance.new("UICorner")
 		UICorner17.CornerRadius = UDim.new(0, windowOptions.radius)
 		UICorner17.Parent = windowShadowHost
-		local UIShadow5 = Instance.new("UIShadow")
-		UIShadow5.Offset = UDim2.new()
+		local UIShadow5 = 		UIShadow5.Offset = UDim2.new()
 		UIShadow5.Transparency = 1
 		UIShadow5.BlurRadius = UDim.new(0, 16)
 		UIShadow5.Color = Color3.fromRGB(6, 6, 8)
 		UIShadow5.ZIndex = -1
 		UIShadow5.Spread = UDim2.fromOffset(2, 2)
 		UIShadow5.Parent = windowShadowHost
-		local UIShadow6 = Instance.new("UIShadow")
-		UIShadow6.Offset = UDim2.new()
+		local UIShadow6 = 		UIShadow6.Offset = UDim2.new()
 		UIShadow6.Transparency = 1
 		UIShadow6.BlurRadius = UDim.new(0, 38)
 		UIShadow6.Color = Color3.fromRGB(6, 6, 8)
@@ -1453,16 +1441,7 @@ getgenv().shitaroebet = {
 		UIStroke8.Color = Color3.fromRGB(52, 52, 64)
 		UIStroke8.Transparency = 0.6
 		UIStroke8.Parent = windowBorder
-		-- isfile("assets/furynew_sheet_1.png") -> false
-		-- isfile("furynew_sheet_1.png") -> false
-		-- isfile("shitaroebet/furynew_sheet_1.png") -> false
-		-- isfile("assets/furynew_sheet_2.png") -> false
-		-- isfile("furynew_sheet_2.png") -> false
-		-- isfile("shitaroebet/furynew_sheet_2.png") -> false
-		-- isfile("assets/furynew_sheet_3.png") -> false
-		-- isfile("furynew_sheet_3.png") -> false
-		-- isfile("shitaroebet/furynew_sheet_3.png") -> false
-		local windowInputLayer = Instance.new("Frame")
+																				local windowInputLayer = Instance.new("Frame")
 		windowInputLayer.Name = "ieiuvxqkzgis"
 		windowInputLayer.Active = true
 		windowInputLayer.ZIndex = 0
@@ -2564,6 +2543,7 @@ getgenv().shitaroebet = {
 		particle105.Parent = particleLayer
 
 		local renderSteppedConnection03 = RunService.RenderStepped:Connect(function(deltaTime4)
+			-- particle layer ambient drift (no-op stub, safe to leave empty)
 		end)
 
 		local pagesContainer = Instance.new("Frame")
@@ -2773,18 +2753,22 @@ getgenv().shitaroebet = {
 		mainContent.MouseLeave:Connect(function()
 		end)
 
+		local renderSteppedConnection04
 		task.defer(function()
 			windowOpenSound.PlaybackSpeed = 0.8
 			windowOpenSound.Volume = 0.42
 			windowOpenSound.TimePosition = 0
 			windowOpenSound:Play()
 			windowShell.Visible = true
-			renderSteppedConnection04:Disconnect()
-
-			RunService.RenderStepped:Connect(function(deltaTime6)
-				-- [envlog] error: Script:3: attempt to compare userdata < number
+			windowRoot.GroupTransparency = 1
+			if renderSteppedConnection04 then renderSteppedConnection04:Disconnect() end
+			renderSteppedConnection04 = RunService.RenderStepped:Connect(function(deltaTime6)
+				local t = windowRoot.GroupTransparency
+				if t <= 0 then renderSteppedConnection04:Disconnect() return end
+				windowRoot.GroupTransparency = math.max(0, t - deltaTime6 * 6)
 			end)
-		end, {
+		end)
+		return {
 	bind = Enum.KeyCode.Unknown,
 	body = mainContent,
 	list = {},
@@ -2812,10 +2796,15 @@ getgenv().shitaroebet = {
 				windowOpenSound.TimePosition = 0
 				windowOpenSound:Play()
 				windowShell.Visible = true
-				renderSteppedConnection04:Disconnect()
-
-				RunService.RenderStepped:Connect(function(deltaTime6)
-					-- [envlog] error: Script:3: attempt to compare userdata < number
+				windowRoot.GroupTransparency = 1
+				if renderSteppedConnection04 then renderSteppedConnection04:Disconnect() end
+				renderSteppedConnection04 = RunService.RenderStepped:Connect(function(deltaTime6)
+					local t = windowRoot.GroupTransparency
+					if t <= 0 then
+						renderSteppedConnection04:Disconnect()
+						return
+					end
+					windowRoot.GroupTransparency = math.max(0, t - deltaTime6 * 6)
 				end)
 			end,
 	setbind = function()
@@ -3211,11 +3200,18 @@ getgenv().shitaroebet = {
 				toggleSound.TimePosition = 0
 				toggleSound:Play()
 
-				local renderSteppedConnection04 = RunService.RenderStepped:Connect(function(deltaTime5)
-					-- [envlog] error: Script:3: attempt to compare userdata < number
+				renderSteppedConnection04 = RunService.RenderStepped:Connect(function(deltaTime5)
+					local t = windowRoot.GroupTransparency
+					if t <= 0 then
+						renderSteppedConnection04:Disconnect()
+						return
+					end
+					windowRoot.GroupTransparency = math.max(0, t - deltaTime5 * 6)
 				end)
 			end
 
-}, true)
+	}
 	end
 }
+
+return getgenv().shitaroebet
