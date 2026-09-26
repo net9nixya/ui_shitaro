@@ -3309,7 +3309,31 @@ UIShadow6.Size = UDim2.new()
 					return sc
 				end
 
-				function tabController:clone(opts) return {} end
+				function tabController:clone(opts)
+								opts = opts or {}
+								local cloneStub = {}
+								cloneStub.viewport = nil
+
+								-- fire callback once with a dummy item so callers that
+								-- chain into it (e.g. esp.AddClone) get a chance to run
+								if type(opts.callback) == "function" then
+									local dummyItem = { viewport = nil, parts = {}, active = false }
+									pcall(opts.callback, nil, dummyItem)
+								end
+
+								-- onrender: store the fn and call it every RenderStepped
+								-- item.active is always false here because there is no real
+								-- viewport; the callback must guard on item.active itself
+								local _renderFn = nil
+								function cloneStub:onrender(fn)
+									if type(fn) ~= "function" then return end
+									_renderFn = fn
+									local dummyItem = { active = false, viewport = cloneStub.viewport, parts = {} }
+									pcall(_renderFn, dummyItem)
+								end
+
+								return cloneStub
+							end
 				function tabController:gallery(opts) return {} end
 				function tabController:color(opts) return {} end
 
@@ -3317,7 +3341,20 @@ UIShadow6.Size = UDim2.new()
 					opts = opts or {}
 					local sc2 = tabController:section({ side = "left" })
 					function sc2:section(o) return tabController:section(o) end
-					function sc2:clone() return {} end
+					function sc2:clone(opts)
+								opts = opts or {}
+								local cloneStub = {}
+								cloneStub.viewport = nil
+								if type(opts.callback) == "function" then
+									pcall(opts.callback, nil, { viewport = nil, parts = {}, active = false })
+								end
+								function cloneStub:onrender(fn)
+									if type(fn) == "function" then
+										pcall(fn, { active = false, viewport = nil, parts = {} })
+									end
+								end
+								return cloneStub
+							end
 					function sc2:gallery() return {} end
 					function sc2:color() return {} end
 					function sc2:sub() return tabController:sub({}) end
