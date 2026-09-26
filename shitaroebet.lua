@@ -1,3 +1,4 @@
+
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
@@ -850,6 +851,10 @@ getgenv().shitaroebet = {
 	end,
 	-- Creates the embedded browser-style panel.
 	browser = function(_, browserOptions)
+		browserOptions = browserOptions or {}
+		if type(browserOptions.size) ~= "userdata" then browserOptions.size = Vector2.new(800, 500) end
+		if type(browserOptions.min) ~= "userdata" then browserOptions.min = Vector2.new(400, 300) end
+		if type(browserOptions.url) ~= "string" then browserOptions.url = "" end
 		local browserWindow = Instance.new("Frame")
 		browserWindow.Visible = false
 		browserWindow.BackgroundColor3 = Color3.fromRGB(6, 6, 8)
@@ -2829,6 +2834,10 @@ UIShadow6.Size = UDim2.new()
 				tween:Play()
 			end,
 	tab = function(_, tabOptions)
+		tabOptions = tabOptions or {}
+		if type(tabOptions.name) ~= "string" then tabOptions.name = "" end
+		if type(tabOptions.tip) ~= "string" then tabOptions.tip = "" end
+		if type(tabOptions.icon) ~= "string" then tabOptions.icon = "" end
 				local tabEntry = Instance.new("Frame")
 				tabEntry.LayoutOrder = 1
 				tabEntry.Name = "eqbdfskkrzuv"
